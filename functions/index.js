@@ -1,13 +1,16 @@
 const functions = require('firebase-functions');
 const nodemailer = require('nodemailer')
+const mailUserName = functions.config().mail.username
+const mailPassword = functions.config().mail.password
+const mailTo = functions.config.mail.to
 
 const mailTransport = nodemailer.createTransport({
-  host: 'smpt.sendgrid.net',
+  host: 'smpt.mailgun.org',
   port: 587,
   requiresAuth: true,
   auth: {
-    user: '',
-    pass: ''
+    user: mailUserName,
+    pass: mailPassword
   }
 })
 
@@ -16,15 +19,15 @@ const mailTemplate = (data) => {
 
 【お名前】 ${data.name}
 【連絡先】 ${data.email}
-【内　容】
+【内容】
  ${data.message} 
   `
 }
 
 exports.sendMail = functions.https.onCall(async (data, _context) => {
   const mail = {
-    from: '',
-    to: '',
+    from: 'test@ikahobase.jp',
+    to: mailTo,
     subject: '【伊香保BASE】お問い合わせがありました',
     text: mailTemplate(data)
   }
