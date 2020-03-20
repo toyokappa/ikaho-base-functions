@@ -1,18 +1,10 @@
 const functions = require('firebase-functions');
-const nodemailer = require('nodemailer')
-const mailUserName = functions.config().mail.username
-const mailPassword = functions.config().mail.password
+const mailgun = require('mailgun-js')
+const apiKey = functions.config().mail.apiKey
+const domain = functions.config().mail.domain
 const mailTo = functions.config().mail.to
 
-const mailTransport = nodemailer.createTransport({
-  host: 'smpt.mailgun.org',
-  port: 587,
-  requiresAuth: true,
-  auth: {
-    user: mailUserName,
-    pass: mailPassword
-  }
-})
+const mg = mailgun({ apiKey, domain })
 
 const mailTemplate = (data) => {
   return `以下の内容でホームページよりお問い合わせがありました。
@@ -33,7 +25,7 @@ exports.sendMail = functions.https.onCall(async (data, _context) => {
   }
 
   try {
-    await mailTransport.sendMail(mail)
+    await mg.messages().send(mail)
   } catch (e) {
     console.error(`send faild: ${e}`)
     throw new functions.https.HttpsError('internal', `send faild: ${e}`)
