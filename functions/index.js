@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const nodemailer = require('nodemailer')
 const mailUserName = functions.config().mail.username
 const mailPassword = functions.config().mail.password
-const mailTo = functions.config.mail.to
+const mailTo = functions.config().mail.to
 
 const mailTransport = nodemailer.createTransport({
   host: 'smpt.mailgun.org',
